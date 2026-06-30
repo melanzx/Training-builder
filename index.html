@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Конструктор тренировок</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121936; --panel2:#172044; --muted:#94a3b8; --text:#eef2ff;
+      --accent:#7c3aed; --accent2:#22c55e; --danger:#fb7185; --line:rgba(255,255,255,.10);
+      --shadow:0 22px 55px rgba(0,0,0,.35); --radius:24px;
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:
+      radial-gradient(circle at top left,rgba(124,58,237,.28),transparent 34rem),
+      radial-gradient(circle at 80% 5%,rgba(34,197,94,.18),transparent 24rem),var(--bg);}
+    button,input,select,textarea{font:inherit}
+    .app{max-width:1180px;margin:0 auto;padding:18px 16px 96px}
+    .hero{display:grid;gap:18px;grid-template-columns:1.2fr .8fr;align-items:stretch;margin:10px 0 18px}
+    .hero-card,.panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));box-shadow:var(--shadow);border-radius:var(--radius);backdrop-filter:blur(14px)}
+    .hero-card{padding:26px;min-height:190px;position:relative;overflow:hidden}
+    .hero-card:after{content:"";position:absolute;inset:auto -70px -95px auto;width:240px;height:240px;border-radius:999px;background:linear-gradient(135deg,var(--accent),#38bdf8);opacity:.28}
+    .kicker{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:#c4b5fd;background:rgba(124,58,237,.12);font-size:13px}
+    h1{font-size:clamp(30px,5vw,56px);line-height:.98;margin:16px 0 12px;letter-spacing:-.04em}
+    .lead{color:#cbd5e1;max-width:680px;line-height:1.55;margin:0;font-size:16px}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px}
+    .stat{padding:18px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+    .stat b{display:block;font-size:28px}.stat span{color:var(--muted);font-size:13px}
+    .tabs{position:sticky;bottom:10px;z-index:20;display:flex;gap:8px;justify-content:center;padding:10px;margin:16px auto 0;max-width:720px;border:1px solid var(--line);border-radius:999px;background:rgba(15,23,42,.82);backdrop-filter:blur(16px);box-shadow:0 10px 35px rgba(0,0,0,.35)}
+    .tab{border:0;color:#cbd5e1;background:transparent;padding:11px 15px;border-radius:999px;cursor:pointer;white-space:nowrap}
+    .tab.active{color:white;background:linear-gradient(135deg,var(--accent),#2563eb)}
+    .grid{display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}
+    .panel{padding:18px}.panel h2{font-size:22px;margin:0 0 14px;letter-spacing:-.02em}.panel h3{margin:18px 0 10px;font-size:16px}.muted{color:var(--muted)}
+    label{display:block;color:#dbeafe;font-size:13px;margin:14px 0 7px}
+    input,select,textarea{width:100%;border:1px solid var(--line);border-radius:16px;background:rgba(15,23,42,.74);color:var(--text);padding:13px 14px;outline:none}
+    textarea{min-height:180px;resize:vertical;line-height:1.45}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid var(--line);background:rgba(255,255,255,.06);color:#dbeafe;padding:9px 11px;border-radius:999px;cursor:pointer;font-size:13px;user-select:none}.chip.active{background:rgba(124,58,237,.32);border-color:rgba(167,139,250,.65);color:#fff}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:16px;padding:12px 15px;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--accent),#2563eb);box-shadow:0 12px 28px rgba(37,99,235,.22);font-weight:700}.btn.secondary{background:rgba(255,255,255,.08);border:1px solid var(--line);box-shadow:none}.btn.green{background:linear-gradient(135deg,#16a34a,#22c55e)}.btn.danger{background:rgba(251,113,133,.16);border:1px solid rgba(251,113,133,.35);box-shadow:none;color:#fecdd3}
+    .notice{padding:12px 14px;border-radius:18px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.22);color:#bbf7d0;font-size:13px;line-height:1.45;margin:12px 0}
+    .warning{padding:12px 14px;border-radius:18px;background:rgba(251,113,133,.10);border:1px solid rgba(251,113,133,.25);color:#fecdd3;font-size:13px;line-height:1.45;margin:12px 0}
+    .workout{display:grid;gap:14px}.day{border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.045);overflow:hidden}.day-head{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:16px;background:rgba(255,255,255,.06)}.day-head h3{margin:0;font-size:18px}.badge{display:inline-flex;align-items:center;border:1px solid var(--line);background:rgba(255,255,255,.07);border-radius:999px;padding:7px 10px;color:#cbd5e1;font-size:12px}
+    .exercise-list{display:grid;gap:10px;padding:14px}.ex{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:center;padding:10px;border-radius:18px;background:rgba(15,23,42,.45);border:1px solid var(--line);cursor:pointer}.ex img{width:76px;height:76px;object-fit:cover;border-radius:14px;background:#0f172a}.ex b{display:block;margin-bottom:5px}.ex small{color:var(--muted);display:block;line-height:1.35}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.tag{font-size:11px;color:#dbeafe;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.28);border-radius:999px;padding:4px 7px}.meta{font-size:13px;color:#cbd5e1;line-height:1.45;margin-top:8px}
+    .searchbar{display:grid;grid-template-columns:1.3fr .8fr .8fr;gap:10px;margin-bottom:12px}.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}.card{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:22px;overflow:hidden;cursor:pointer}.card img{width:100%;aspect-ratio:1.25/1;object-fit:cover;background:#0f172a}.card-body{padding:12px}.card b{display:block;line-height:1.25}.empty{border:1px dashed var(--line);border-radius:22px;padding:22px;text-align:center;color:var(--muted)}
+    .saved-item{padding:14px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.05);margin-bottom:10px}.saved-item b{display:block;margin-bottom:5px}
+    dialog{border:1px solid var(--line);border-radius:26px;background:#101832;color:var(--text);max-width:720px;width:min(92vw,720px);padding:0;box-shadow:var(--shadow)}dialog::backdrop{background:rgba(0,0,0,.62);backdrop-filter:blur(6px)}.modal-media{width:100%;max-height:430px;object-fit:contain;background:#0b1020;border-radius:24px 24px 0 0}.modal-body{padding:18px}.close{position:absolute;right:14px;top:14px;border:1px solid var(--line);background:rgba(15,23,42,.76);color:white;border-radius:999px;width:42px;height:42px;cursor:pointer}.steps{padding-left:20px;color:#dbeafe;line-height:1.55}.hidden{display:none!important}
+    .loader{display:inline-flex;gap:8px;align-items:center;color:#cbd5e1}.dot{width:8px;height:8px;border-radius:999px;background:#a78bfa;animation:pulse 1s infinite alternate}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}@keyframes pulse{to{opacity:.25;transform:translateY(-3px)}}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.searchbar{grid-template-columns:1fr}.app{padding:12px 12px 92px}.panel{padding:15px}.tabs{overflow-x:auto;justify-content:flex-start;border-radius:22px}.tab{padding:10px 12px}.row,.row3{grid-template-columns:1fr}.hero-card{padding:20px}.stats{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="kicker">🏋️ Конструктор тренировок на базе Exercise Dataset</div>
+        <h1>Собери программу без хаоса в заметках</h1>
+        <p class="lead">Выбирай цель, оборудование и количество дней. Приложение подберёт упражнения, покажет карточки с GIF и сделает готовый запрос для ChatGPT, чтобы быстро доработать программу под себя.</p>
+        <div id="loadStatus" class="notice"><span class="loader"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Загружаю базу упражнений из GitHub...</span></div>
+      </div>
+      <div class="hero-card stats">
+        <div class="stat"><b id="totalCount">—</b><span>упражнений</span></div>
+        <div class="stat"><b id="visibleCount">—</b><span>найдено сейчас</span></div>
+        <div class="stat"><b id="savedCount">0</b><span>сохранено программ</span></div>
+        <div class="stat"><b>📱</b><span>удобно на телефоне</span></div>
+      </div>
+    </section>
+
+    <main id="screenBuilder" class="screen grid">
+      <aside class="panel">
+        <h2>Параметры</h2>
+        <label>Цель</label>
+        <div class="chips" id="goalChips">
+          <button class="chip active" data-goal="form">Общая форма</button>
+          <button class="chip" data-goal="muscle">Масса</button>
+          <button class="chip" data-goal="fatloss">Похудение</button>
+          <button class="chip" data-goal="strength">Сила</button>
+        </div>
+
+        <div class="row">
+          <div><label>Уровень</label><select id="level"><option value="beginner">Новичок</option><option value="middle">Средний</option><option value="advanced">Опытный</option></select></div>
+          <div><label>Дней в неделю</label><select id="days"><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+        </div>
+        <div class="row">
+          <div><label>Длительность</label><select id="duration"><option value="30">30 минут</option><option value="45" selected>45 минут</option><option value="60">60 минут</option></select></div>
+          <div><label>Где тренируешься</label><select id="place"><option value="home">Дома</option><option value="gym" selected>Зал</option><option value="mixed">Смешанно</option></select></div>
+        </div>
+        <label>Акцент</label>
+        <select id="focus"><option value="full">Всё тело</option><option value="upper legs">Ноги</option><option value="chest">Грудь</option><option value="back">Спина</option><option value="shoulders">Плечи</option><option value="upper arms">Руки</option><option value="waist">Пресс / корпус</option></select>
+        <label>Оборудование</label>
+        <div class="chips" id="equipmentChips"></div>
+        <div class="btns">
+          <button class="btn" id="generateBtn">Собрать программу</button>
+          <button class="btn secondary" id="rerollBtn">Перемешать</button>
+        </div>
+        <div class="btns">
+          <button class="btn green" id="saveBtn">Сохранить</button>
+          <button class="btn secondary" id="copyPromptBtn">Копировать запрос</button>
+        </div>
+        <div class="warning">Это не врач и не тренер с глазами. Если есть травмы, боль, ограничения или проблемы с давлением/сердцем, программу нужно согласовать со специалистом.</div>
+      </aside>
+
+      <section class="panel">
+        <h2>Твоя программа</h2>
+        <p class="muted" id="workoutSummary">Сначала нажми «Собрать программу». Да, кнопка существует не просто ради эстетики.</p>
+        <div id="workout" class="workout"></div>
+      </section>
+    </main>
+
+    <main id="screenLibrary" class="screen panel hidden">
+      <h2>База упражнений</h2>
+      <div class="searchbar">
+        <input id="searchInput" placeholder="Поиск: bench press, squat, abs..." />
+        <select id="filterCategory"><option value="all">Все части тела</option></select>
+        <select id="filterEquipment"><option value="all">Всё оборудование</option></select>
+      </div>
+      <div class="btns"><button class="btn secondary" id="showMoreBtn">Показать ещё</button></div>
+      <div id="cards" class="cards" style="margin-top:14px"></div>
+    </main>
+
+    <main id="screenSaved" class="screen panel hidden">
+      <h2>Сохранённые программы</h2>
+      <div id="savedList"></div>
+      <div class="btns"><button class="btn danger" id="clearSavedBtn">Очистить сохранённые</button></div>
+    </main>
+
+    <main id="screenPrompt" class="screen panel hidden">
+      <h2>Запрос для ChatGPT</h2>
+      <p class="muted">Скопируй текст ниже и отправь его мне в ChatGPT. Я смогу доработать программу, заменить упражнения, расписать прогрессию, отдых и питание. Магия? Нет, просто нормальная структура запроса, редкое явление среди людей.</p>
+      <textarea id="promptBox" spellcheck="false"></textarea>
+      <div class="btns">
+        <button class="btn" id="copyPromptBtn2">Скопировать</button>
+        <button class="btn secondary" id="openChatBtn">Открыть ChatGPT</button>
+      </div>
+    </main>
+
+    <nav class="tabs">
+      <button class="tab active" data-screen="Builder">Генератор</button>
+      <button class="tab" data-screen="Library">База</button>
+      <button class="tab" data-screen="Saved">Сохранённые</button>
+      <button class="tab" data-screen="Prompt">Запрос</button>
+    </nav>
+  </div>
+
+  <dialog id="exerciseModal">
+    <button class="close" id="closeModal">×</button>
+    <img id="modalImg" class="modal-media" alt="animation" />
+    <div class="modal-body">
+      <h2 id="modalTitle"></h2>
+      <div id="modalMeta" class="tags"></div>
+      <h3>Инструкция</h3>
+      <ol id="modalSteps" class="steps"></ol>
+    </div>
+  </dialog>
+
+  <script>
+    const DATA_URL = 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/data/exercises.json';
+    const RAW_BASE = 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/';
+    const state = { data: [], workout: [], visibleLimit: 80, goal: 'form', selectedEquipment: new Set() };
+    const $ = (id) => document.getElementById(id);
+
+    const ru = {
+      'upper arms':'руки', 'upper legs':'ноги', 'back':'спина', 'waist':'пресс / корпус', 'chest':'грудь', 'shoulders':'плечи', 'lower legs':'икры / голень', 'lower arms':'предплечья', 'cardio':'кардио', 'neck':'шея',
+      'body weight':'без оборудования', 'dumbbell':'гантели', 'barbell':'штанга', 'cable':'кроссовер', 'leverage machine':'тренажёр', 'band':'резинка', 'smith machine':'Смит', 'kettlebell':'гиря', 'weighted':'доп. вес', 'stability ball':'фитбол', 'ez barbell':'EZ-гриф', 'assisted':'ассистированный тренажёр', 'medicine ball':'медбол', 'olympic barbell':'олимпийская штанга', 'roller':'ролик', 'rope':'канат', 'bosu ball':'BOSU', 'resistance band':'резинка'
+    };
+    const tr = (v) => ru[String(v).toLowerCase()] || v || '—';
+    const imgUrl = (path) => RAW_BASE + path;
+    const uniq = (arr) => [...new Set(arr.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+    const sample = (arr) => arr.length ? arr[Math.floor(Math.random()*arr.length)] : null;
+
+    function currentEquipment(){
+      if (state.selectedEquipment.size) return [...state.selectedEquipment];
+      const place = $('place').value;
+      if (place === 'home') return ['body weight','dumbbell','band','resistance band','kettlebell','stability ball'];
+      if (place === 'gym') return [];
+      return [];
+    }
+
+    function filteredByEquipment(exs){
+      const eq = currentEquipment();
+      if (!eq.length) return exs;
+      return exs.filter(e => eq.includes(String(e.equipment).toLowerCase()));
+    }
+
+    function pickExercise(category, avoid = new Set()){
+      let pool = filteredByEquipment(state.data).filter(e => e.category === category && !avoid.has(e.id));
+      if (!pool.length) pool = state.data.filter(e => e.category === category && !avoid.has(e.id));
+      const chosen = sample(pool);
+      if (chosen) avoid.add(chosen.id);
+      return chosen;
+    }
+
+    function prescription(){
+      const level = $('level').value, goal = state.goal;
+      if(goal === 'strength') return level === 'beginner' ? '3×5–6' : '4×4–6';
+      if(goal === 'fatloss') return '3×12–18';
+      if(goal === 'muscle') return level === 'beginner' ? '3×8–12' : '4×8–12';
+      return level === 'beginner' ? '2–3×10–12' : '3×8–15';
+    }
+
+    function restText(){
+      if(state.goal === 'strength') return 'Отдых 2–3 минуты между тяжёлыми подходами.';
+      if(state.goal === 'fatloss') return 'Отдых 45–75 секунд, можно делать кругами.';
+      return 'Отдых 60–120 секунд между подходами.';
+    }
+
+    function dayTemplate(day, totalDays){
+      const focus = $('focus').value;
+      const base = ['upper legs','chest','back','shoulders','waist'];
+      const extra = day % 2 ? 'upper arms' : 'lower legs';
+      if(focus !== 'full'){
+        const arr = [focus, ...base.filter(x=>x!==focus), extra];
+        return arr.slice(0, Number($('duration').value) >= 60 ? 6 : 5);
+      }
+      if(totalDays === 2) return day === 1 ? ['upper legs','chest','back','shoulders','waist'] : ['upper legs','back','chest','upper arms','waist'];
+      if(totalDays === 3) return day === 1 ? ['upper legs','chest','back','waist'] : day === 2 ? ['upper legs','shoulders','back','upper arms','waist'] : ['chest','back','upper legs','shoulders','waist'];
+      if(totalDays === 4) return day === 1 ? ['chest','shoulders','upper arms','waist'] : day === 2 ? ['upper legs','lower legs','waist'] : day === 3 ? ['back','upper arms','shoulders','waist'] : ['upper legs','chest','back','waist'];
+      return day === 1 ? ['chest','shoulders','upper arms'] : day === 2 ? ['upper legs','lower legs','waist'] : day === 3 ? ['back','upper arms','waist'] : day === 4 ? ['chest','shoulders','waist'] : ['upper legs','back','cardio'];
+    }
+
+    function generateWorkout(){
+      if(!state.data.length) return;
+      const days = Number($('days').value);
+      const avoid = new Set();
+      state.workout = [];
+      for(let d=1; d<=days; d++){
+        const categories = dayTemplate(d, days);
+        const exercises = categories.map(cat => pickExercise(cat, avoid)).filter(Boolean).map(e => ({...e, sets: prescription()}));
+        state.workout.push({ day:d, title: `День ${d}`, exercises });
+      }
+      renderWorkout();
+      buildPrompt();
+    }
+
+    function renderWorkout(){
+      const wrap = $('workout');
+      wrap.innerHTML = '';
+      if(!state.workout.length){ wrap.innerHTML = '<div class="empty">Программа пока не создана.</div>'; return; }
+      $('workoutSummary').textContent = `${$('days').value} тренировки в неделю · ${$('duration').value} минут · ${restText()}`;
+      state.workout.forEach(day => {
+        const el = document.createElement('section'); el.className = 'day';
+        el.innerHTML = `<div class="day-head"><h3>${day.title}</h3><span class="badge">${day.exercises.length} упражнений</span></div><div class="exercise-list"></div>`;
+        const list = el.querySelector('.exercise-list');
+        day.exercises.forEach(ex => list.appendChild(exerciseRow(ex)));
+        wrap.appendChild(el);
+      });
+    }
+
+    function exerciseRow(ex){
+      const div = document.createElement('div'); div.className='ex';
+      div.innerHTML = `<img src="${imgUrl(ex.image)}" loading="lazy" alt=""><div><b>${cap(ex.name)}</b><small>${tr(ex.category)} · ${tr(ex.equipment)} · цель: ${tr(ex.target)}</small><div class="tags"><span class="tag">${ex.sets || prescription()}</span><span class="tag">${tr(ex.muscle_group)}</span></div></div>`;
+      div.onclick = () => openModal(ex);
+      return div;
+    }
+
+    function renderLibrary(){
+      const q = $('searchInput').value.trim().toLowerCase();
+      const cat = $('filterCategory').value, eq = $('filterEquipment').value;
+      let arr = state.data.filter(e => {
+        const text = [e.name,e.category,e.equipment,e.target,e.muscle_group,...(e.secondary_muscles||[])].join(' ').toLowerCase();
+        return (!q || text.includes(q)) && (cat==='all' || e.category===cat) && (eq==='all' || e.equipment===eq);
+      });
+      $('visibleCount').textContent = arr.length;
+      const cards = $('cards'); cards.innerHTML = '';
+      arr.slice(0,state.visibleLimit).forEach(ex => {
+        const card = document.createElement('article'); card.className='card';
+        card.innerHTML = `<img src="${imgUrl(ex.image)}" loading="lazy" alt=""><div class="card-body"><b>${cap(ex.name)}</b><div class="tags"><span class="tag">${tr(ex.category)}</span><span class="tag">${tr(ex.equipment)}</span></div></div>`;
+        card.onclick = () => openModal(ex);
+        cards.appendChild(card);
+      });
+      if(!arr.length) cards.innerHTML = '<div class="empty">Ничего не найдено. Даже база упражнений решила отдохнуть.</div>';
+    }
+
+    function openModal(ex){
+      $('modalTitle').textContent = cap(ex.name);
+      $('modalImg').src = imgUrl(ex.gif_url || ex.image);
+      $('modalMeta').innerHTML = `<span class="tag">${tr(ex.category)}</span><span class="tag">${tr(ex.equipment)}</span><span class="tag">${tr(ex.target)}</span>`;
+      const steps = (ex.instruction_steps && (ex.instruction_steps.ru || ex.instruction_steps.en || ex.instruction_steps.tr)) || [];
+      const text = steps.length ? steps : String((ex.instructions && (ex.instructions.ru || ex.instructions.en || ex.instructions.tr)) || 'Инструкция не найдена.').split(/\.\s+/).filter(Boolean);
+      $('modalSteps').innerHTML = text.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+      $('exerciseModal').showModal();
+    }
+
+    function buildPrompt(){
+      const lines = [];
+      lines.push('Составь и доработай мне программу тренировок на основе этих выбранных упражнений.');
+      lines.push(`Цель: ${goalName(state.goal)}. Уровень: ${$('level').selectedOptions[0].text}. Дней в неделю: ${$('days').value}. Длительность: ${$('duration').value} минут. Место: ${$('place').selectedOptions[0].text}. Акцент: ${$('focus').selectedOptions[0].text}.`);
+      lines.push(`Оборудование: ${currentEquipment().length ? currentEquipment().map(tr).join(', ') : 'без строгого ограничения'}.`);
+      lines.push('Нужно: расписать порядок упражнений, подходы, повторы, отдых, разминку, заминку, прогрессию на 4 недели и варианты замены упражнений.');
+      if(state.workout.length){
+        lines.push('\nТекущая заготовка:');
+        state.workout.forEach(d => { lines.push(`\n${d.title}:`); d.exercises.forEach((e,i)=> lines.push(`${i+1}. ${e.name} — ${tr(e.category)}, ${tr(e.equipment)}, ${e.sets}`)); });
+      }
+      $('promptBox').value = lines.join('\n');
+    }
+
+    function saveWorkout(){
+      if(!state.workout.length) return toast('Сначала собери программу. Сохранять пустоту умеет только бюрократия.');
+      const saved = getSaved();
+      saved.unshift({ id: Date.now(), date: new Date().toLocaleString('ru-RU'), params: {goal: state.goal, days:$('days').value, place:$('place').value}, workout: state.workout });
+      localStorage.setItem('workout_builder_saved', JSON.stringify(saved.slice(0,30)));
+      renderSaved(); toast('Программа сохранена');
+    }
+    function getSaved(){ try{return JSON.parse(localStorage.getItem('workout_builder_saved')||'[]')}catch{return []} }
+    function renderSaved(){
+      const saved = getSaved(); $('savedCount').textContent = saved.length;
+      const list = $('savedList'); list.innerHTML = '';
+      if(!saved.length){ list.innerHTML = '<div class="empty">Пока ничего не сохранено.</div>'; return; }
+      saved.forEach(item => {
+        const div = document.createElement('div'); div.className='saved-item';
+        div.innerHTML = `<b>${item.date} · ${goalName(item.params.goal)} · ${item.params.days} дн.</b><span class="muted">${item.workout.map(d=>d.exercises.length).reduce((a,b)=>a+b,0)} упражнений</span><div class="btns"><button class="btn secondary">Открыть</button><button class="btn danger">Удалить</button></div>`;
+        const [open, del] = div.querySelectorAll('button');
+        open.onclick = () => { state.workout = item.workout; renderWorkout(); buildPrompt(); showScreen('Builder'); };
+        del.onclick = () => { localStorage.setItem('workout_builder_saved', JSON.stringify(saved.filter(x=>x.id!==item.id))); renderSaved(); };
+        list.appendChild(div);
+      });
+    }
+
+    function setupFilters(){
+      const cats = uniq(state.data.map(e=>e.category));
+      const eqs = uniq(state.data.map(e=>e.equipment));
+      cats.forEach(c => $('filterCategory').insertAdjacentHTML('beforeend', `<option value="${c}">${tr(c)}</option>`));
+      eqs.forEach(e => $('filterEquipment').insertAdjacentHTML('beforeend', `<option value="${e}">${tr(e)}</option>`));
+      const common = ['body weight','dumbbell','barbell','cable','band','kettlebell','smith machine','leverage machine','stability ball'];
+      $('equipmentChips').innerHTML = common.map(e => `<button class="chip" data-eq="${e}">${tr(e)}</button>`).join('');
+      $('equipmentChips').querySelectorAll('.chip').forEach(chip => chip.onclick = () => { chip.classList.toggle('active'); const eq=chip.dataset.eq; chip.classList.contains('active') ? state.selectedEquipment.add(eq) : state.selectedEquipment.delete(eq); buildPrompt(); });
+    }
+
+    function showScreen(name){
+      document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+      $(`screen${name}`).classList.remove('hidden');
+      document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.screen===name));
+      if(name==='Library') renderLibrary(); if(name==='Prompt') buildPrompt(); if(name==='Saved') renderSaved();
+      scrollTo({top:0, behavior:'smooth'});
+    }
+    function copyPrompt(){ buildPrompt(); navigator.clipboard.writeText($('promptBox').value).then(()=>toast('Запрос скопирован')); }
+    function toast(msg){ const n=$('loadStatus'); n.className='notice'; n.textContent=msg; setTimeout(()=>{ if(state.data.length) n.textContent='База загружена. Можно собирать программу.'; },2200); }
+    function cap(s){ return String(s||'').replace(/^./, m=>m.toUpperCase()); }
+    function goalName(g){ return ({form:'общая форма',muscle:'масса',fatloss:'похудение',strength:'сила'})[g] || g; }
+    function escapeHtml(s){ return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+    async function init(){
+      try{
+        const res = await fetch(DATA_URL); if(!res.ok) throw new Error('HTTP '+res.status);
+        state.data = await res.json();
+        $('totalCount').textContent = state.data.length;
+        $('visibleCount').textContent = state.data.length;
+        $('loadStatus').textContent = 'База загружена. Можно собирать программу.';
+        setupFilters(); renderSaved(); renderLibrary(); generateWorkout();
+      }catch(err){
+        $('loadStatus').className='warning';
+        $('loadStatus').textContent = 'Не удалось загрузить базу. Проверь интернет или открой файл через обычный браузер. Ошибка: '+err.message;
+      }
+    }
+
+    document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showScreen(t.dataset.screen));
+    document.querySelectorAll('#goalChips .chip').forEach(chip=>chip.onclick=()=>{ document.querySelectorAll('#goalChips .chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); state.goal=chip.dataset.goal; buildPrompt(); });
+    ['level','days','duration','place','focus'].forEach(id => $(id).onchange = () => buildPrompt());
+    $('generateBtn').onclick = generateWorkout; $('rerollBtn').onclick = generateWorkout; $('saveBtn').onclick = saveWorkout;
+    $('copyPromptBtn').onclick = copyPrompt; $('copyPromptBtn2').onclick = copyPrompt;
+    $('openChatBtn').onclick = () => { copyPrompt(); window.open('https://chatgpt.com/', '_blank'); };
+    $('showMoreBtn').onclick = () => { state.visibleLimit += 80; renderLibrary(); };
+    $('searchInput').oninput = () => { state.visibleLimit = 80; renderLibrary(); };
+    $('filterCategory').onchange = $('filterEquipment').onchange = () => { state.visibleLimit = 80; renderLibrary(); };
+    $('clearSavedBtn').onclick = () => { localStorage.removeItem('workout_builder_saved'); renderSaved(); };
+    $('closeModal').onclick = () => $('exerciseModal').close();
+    init();
+  </script>
+</body>
+</html>
